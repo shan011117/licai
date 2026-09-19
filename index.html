@@ -4,7 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>个人资产底线</title>
+<title>我的资产</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#667eea">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="我的资产">
+  <link rel="apple-touch-icon" href="./icon-192.png">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
@@ -1921,6 +1927,19 @@ document.getElementById('expenseModal').addEventListener('click', function(e) {
 document.getElementById('debtModal').addEventListener('click', function(e) {
   if (e.target === this) closeDebtModal();
 });
+
+// ========== PWA Service Worker 注册 ==========
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(function(reg) {
+        console.log('PWA Service Worker 注册成功', reg.scope);
+      })
+      .catch(function(err) {
+        console.log('Service Worker 注册失败:', err);
+      });
+  });
+}
 </script>
 </body>
 </html>
