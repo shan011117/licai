@@ -874,9 +874,23 @@
     <!-- 资产底线分析 -->
     <div class="card stats-section">
       <div class="stats-title">📊 资产底线</div>
-      <div class="stats-item">
-        <span class="label">总资产</span>
-        <span class="value" id="statTotalAsset">¥ 0</span>
+      <div class="stats-item stats-toggle" onclick="toggleAssetDetail()" style="cursor:pointer; user-select:none;">
+        <span class="label">总资产 <span style="font-size:11px; color:#999;">点击展开明细</span></span>
+        <span class="value" id="statTotalAsset">¥ 0 <span style="font-size:12px; color:#999;" id="assetToggleArrow">▶</span></span>
+      </div>
+      <div id="assetDetail" style="display:none; padding:8px 0; margin-left:12px; border-left:2px solid #f0f0f0; padding-left:14px;">
+        <div class="stats-item">
+          <span class="label">🥇 黄金</span>
+          <span class="value" id="statGoldValue" style="font-size:14px; color:#666;">¥ 0</span>
+        </div>
+        <div class="stats-item">
+          <span class="label">💵 存款</span>
+          <span class="value" id="statCashValue" style="font-size:14px; color:#666;">¥ 0</span>
+        </div>
+        <div class="stats-item">
+          <span class="label">📈 基金</span>
+          <span class="value" id="statFundValue" style="font-size:14px; color:#666;">¥ 0</span>
+        </div>
       </div>
       <div class="stats-item">
         <span class="label">总负债</span>
@@ -1941,6 +1955,19 @@ async function refreshAllData() {
 }
 
 // ========== 计算所有 ==========
+function toggleAssetDetail() {
+  const detail = document.getElementById('assetDetail');
+  const arrow = document.getElementById('assetToggleArrow');
+  if (!detail) return;
+  if (detail.style.display === 'none') {
+    detail.style.display = 'block';
+    if (arrow) arrow.textContent = '▼';
+  } else {
+    detail.style.display = 'none';
+    if (arrow) arrow.textContent = '▶';
+  }
+}
+
 function calculateAll() {
   const goldGram = parseFloat(document.getElementById('goldGram')?.value) || 0;
   const cash = parseFloat(document.getElementById('cashAmount')?.value) || 0;
@@ -1961,8 +1988,16 @@ function calculateAll() {
   const el5 = document.getElementById('statSurvivalDays');
   const el6 = document.getElementById('statSurvivalMonths');
 
-  if (el1) el1.textContent = '¥ ' + totalAsset.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if (el1) el1.innerHTML = '¥ ' + totalAsset.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' <span style="font-size:12px; color:#999;" id="assetToggleArrow">▶</span>';
   if (el2) el2.textContent = '-¥ ' + totalDebt.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  // 资产明细
+  const goldDetailEl = document.getElementById('statGoldValue');
+  const cashDetailEl = document.getElementById('statCashValue');
+  const fundDetailEl = document.getElementById('statFundValue');
+  if (goldDetailEl) goldDetailEl.textContent = '¥ ' + goldValue.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:0});
+  if (cashDetailEl) cashDetailEl.textContent = '¥ ' + cash.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:0});
+  if (fundDetailEl) fundDetailEl.textContent = '¥ ' + fundTotal.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:0});
 
   const netAsset = totalAsset - totalDebt;
   if (el3) el3.textContent = '¥ ' + netAsset.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
